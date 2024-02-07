@@ -67,7 +67,6 @@ def svm_loss_torch(model, x, y_true, sample_weights=None):
 
 
 def convert_grad_to_ndarray(grad):
-    print('1')
     grad_list = list(grad)
     grad_arr = None
     for i in range(len(grad_list)):

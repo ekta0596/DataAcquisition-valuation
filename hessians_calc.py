@@ -6,9 +6,7 @@ import numpy as np
 from utils import *
 
 def hessian_one_point(model, x, y, loss_func):
-    print('hgbch')
     x, y = torch.FloatTensor(x), torch.FloatTensor([y])
-    print(x,y)
     loss = loss_func(model, x, y)
     params = [ p for p in model.parameters() if p.requires_grad ]
     first_grads = convert_grad_to_tensor(grad(loss, params, retain_graph=True, create_graph=True))
@@ -20,7 +18,6 @@ def hessian_one_point(model, x, y, loss_func):
 def get_hessian_all_points(model, x_train, y_train, loss_func):
     hessian_all_points = []
     tbar = tqdm.tqdm(total=len(x_train))
-    print(tbar)
     for i in range(len(x_train)):
         hessian_all_points.append(hessian_one_point(model, x_train[i], y_train[i], loss_func)/len(x_train))
         tbar.update(1)
