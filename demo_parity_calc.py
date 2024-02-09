@@ -42,6 +42,24 @@ def del_predictive_parity_del_theta(model, X_test_orig, X_test, y_test):
     v = np.subtract(del_f_protected, del_f_privileged)
     return v
 
+def del_spd_del_theta(model, X_test_orig, X_test, dataset):
+    num_params = len(convert_grad_to_ndarray(list(model.parameters())))
+    del_f_protected = np.zeros((num_params,))
+    del_f_privileged = np.zeros((num_params,))
+    numPrivileged = X_test_orig['age'].sum()
+    numProtected = len(X_test_orig) - numPrivileged
+
+    for i in range(len(X_test)):
+        del_f_i = del_f_del_theta_i(model, X_test[i])
+        del_f_i_arr = convert_grad_to_ndarray(del_f_i)
+        if X_test_orig.iloc[i]['age'] == 1: #privileged
+            del_f_privileged += del_f_i_arr
+        elif X_test_orig.iloc[i]['age'] == 0:
+            del_f_protected += del_f_i_arr
+    del_f_privileged /= numPrivileged
+    del_f_protected /= numProtected
+    v = del_f_protected - del_f_privileged
+    return v
 
 def del_L_del_theta_i(model, x, y_true, loss_func, retain_graph=False):
     loss = loss_func(model, x, y_true)
